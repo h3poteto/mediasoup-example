@@ -77,7 +77,8 @@ impl ExampleConn {
         // This example uses only 2 transports.
         let transport_options =
             WebRtcTransportOptions::new(TransportListenIps::new(TransportListenIp {
-                ip: "127.0.0.1".parse().unwrap(),
+                // Your local IP address
+                ip: "192.168.10.12".parse().unwrap(),
                 announced_ip: None,
             }));
         let producer_transport = router
