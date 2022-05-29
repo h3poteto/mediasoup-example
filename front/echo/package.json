@@ -5,7 +5,7 @@
   "main": "index.js",
   "author": "h3poteto",
   "scripts": {
-    "echo": "webpack serve --entry=./src/echo.ts"
+    "start": "webpack serve"
   },
   "devDependencies": {
     "ts-loader": "^9.3.0",
