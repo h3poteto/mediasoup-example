@@ -5,13 +5,15 @@ use mediasoup::{
     data_producer::{DataProducer, DataProducerId, DataProducerOptions},
     prelude::{
         DataConsumer, DataConsumerId, DataConsumerOptions, DtlsParameters, IceCandidate,
-        IceParameters, TransportListenIp, TransportListenIps, WebRtcTransport,
-        WebRtcTransportOptions, WebRtcTransportRemoteParameters, WorkerSettings,
+        IceParameters, SctpStreamParameters, TransportListenIp, TransportListenIps,
+        WebRtcTransport, WebRtcTransportOptions, WebRtcTransportRemoteParameters, WorkerSettings,
     },
-    router::RouterOptions,
+    router::{Router, RouterOptions},
     rtp_parameters::{
-        MimeTypeAudio, RtcpFeedback, RtpCodecCapability, RtpCodecParametersParameters,
+        MimeTypeAudio, RtcpFeedback, RtpCapabilitiesFinalized, RtpCodecCapability,
+        RtpCodecParametersParameters,
     },
+    sctp_parameters::SctpParameters,
     transport::{Transport, TransportId},
     worker::{WorkerLogLevel, WorkerLogTag},
     worker_manager::WorkerManager,
@@ -39,6 +41,7 @@ struct Transports {
 struct DataConn {
     consumers: HashMap<DataConsumerId, DataConsumer>,
     producers: Vec<DataProducer>,
+    router: Router,
     transports: Transports,
 }
 
@@ -75,12 +78,13 @@ impl DataConn {
             .map_err(|error| format!("Failed to create router: {}", error))?;
 
         // This example uses only 2 transports.
-        let transport_options =
+        let mut transport_options =
             WebRtcTransportOptions::new(TransportListenIps::new(TransportListenIp {
                 // Your local IP address
                 ip: "192.168.10.12".parse().unwrap(),
                 announced_ip: None,
             }));
+        transport_options.enable_sctp = true;
         let producer_transport = router
             .create_webrtc_transport(transport_options.clone())
             .await
@@ -97,6 +101,7 @@ impl DataConn {
                 producer: producer_transport,
                 consumer: consumer_transport,
             },
+            router,
         })
     }
 }
@@ -108,6 +113,7 @@ struct TransportOptions {
     dtls_parameters: DtlsParameters,
     ice_candidates: Vec<IceCandidate>,
     ice_parameters: IceParameters,
+    sctp_parameters: SctpParameters,
 }
 
 #[derive(Serialize, Message)]
@@ -118,6 +124,7 @@ enum ServerMessage {
     Init {
         consumer_transport_options: TransportOptions,
         producer_transport_options: TransportOptions,
+        router_rtp_capabilities: RtpCapabilitiesFinalized,
     },
 
     ConnectedProducerTransport,
@@ -129,7 +136,10 @@ enum ServerMessage {
     #[serde(rename_all = "camelCase")]
     Consumed {
         id: DataConsumerId,
-        producer_id: DataProducerId,
+        data_producer_id: DataProducerId,
+        sctp_stream_parameters: SctpStreamParameters,
+        label: String,
+        protocol: String,
     },
 }
 
@@ -142,11 +152,13 @@ enum ClientMessage {
     #[serde(rename_all = "camelCase")]
     ConnectProducerTransport { dtls_parameters: DtlsParameters },
     #[serde(rename_all = "camelCase")]
-    Produce {},
+    Produce {
+        sctp_stream_parameters: SctpStreamParameters,
+    },
     #[serde(rename_all = "camelCase")]
     ConnectConsumerTransport { dtls_parameters: DtlsParameters },
     #[serde(rename_all = "camelCase")]
-    Consume { producer_id: DataProducerId },
+    Consume { data_producer_id: DataProducerId },
 }
 
 #[derive(Message)]
@@ -163,22 +175,39 @@ impl Actor for DataConn {
     fn started(&mut self, ctx: &mut Self::Context) {
         println!("WebSocket connection created");
 
-        let server_init_message = ServerMessage::Init {
-            consumer_transport_options: TransportOptions {
-                id: self.transports.consumer.id(),
-                dtls_parameters: self.transports.consumer.dtls_parameters(),
-                ice_candidates: self.transports.consumer.ice_candidates().clone(),
-                ice_parameters: self.transports.consumer.ice_parameters().clone(),
-            },
-            producer_transport_options: TransportOptions {
-                id: self.transports.producer.id(),
-                dtls_parameters: self.transports.producer.dtls_parameters(),
-                ice_candidates: self.transports.producer.ice_candidates().clone(),
-                ice_parameters: self.transports.producer.ice_parameters().clone(),
-            },
-        };
+        match self.transports.consumer.sctp_parameters() {
+            Some(consumer_sctp) => match self.transports.producer.sctp_parameters() {
+                Some(producer_sctp) => {
+                    let server_init_message = ServerMessage::Init {
+                        consumer_transport_options: TransportOptions {
+                            id: self.transports.consumer.id(),
+                            dtls_parameters: self.transports.consumer.dtls_parameters(),
+                            ice_candidates: self.transports.consumer.ice_candidates().clone(),
+                            ice_parameters: self.transports.consumer.ice_parameters().clone(),
+                            sctp_parameters: consumer_sctp.clone(),
+                        },
+                        producer_transport_options: TransportOptions {
+                            id: self.transports.producer.id(),
+                            dtls_parameters: self.transports.producer.dtls_parameters(),
+                            ice_candidates: self.transports.producer.ice_candidates().clone(),
+                            ice_parameters: self.transports.producer.ice_parameters().clone(),
+                            sctp_parameters: producer_sctp.clone(),
+                        },
+                        router_rtp_capabilities: self.router.rtp_capabilities().clone(),
+                    };
 
-        ctx.address().do_send(server_init_message);
+                    ctx.address().do_send(server_init_message);
+                }
+                None => {
+                    println!("sctp parameters for producer does not exist");
+                    ctx.close(Some(ws::CloseReason::from(ws::CloseCode::Error)));
+                }
+            },
+            None => {
+                println!("sctp parameters for consumer does not exist");
+                ctx.close(Some(ws::CloseReason::from(ws::CloseCode::Error)));
+            }
+        }
     }
 
     fn stopped(&mut self, _ctx: &mut Self::Context) {
@@ -206,7 +235,10 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for DataConn {
                 println!("receive binary {:?}", bin);
                 ctx.binary(bin)
             }
-            Ok(ws::Message::Close(reason)) => ctx.close(reason),
+            Ok(ws::Message::Close(reason)) => {
+                println!("receive close message: {:?}", reason);
+                ctx.close(reason);
+            }
             _ => (),
         }
     }
@@ -239,13 +271,15 @@ impl Handler<ClientMessage> for DataConn {
                     }
                 });
             }
-            ClientMessage::Produce {} => {
+            ClientMessage::Produce {
+                sctp_stream_parameters,
+            } => {
                 let address = ctx.address();
                 let transport = self.transports.producer.clone();
 
                 actix::spawn(async move {
                     match transport
-                        .produce_data(DataProducerOptions::new_direct())
+                        .produce_data(DataProducerOptions::new_sctp(sctp_stream_parameters))
                         .await
                     {
                         Ok(producer) => {
@@ -281,19 +315,37 @@ impl Handler<ClientMessage> for DataConn {
                     }
                 });
             }
-            ClientMessage::Consume { producer_id } => {
+            ClientMessage::Consume { data_producer_id } => {
                 let address = ctx.address();
                 let transport = self.transports.consumer.clone();
 
                 actix::spawn(async move {
-                    let options = DataConsumerOptions::new_direct(producer_id);
+                    let options = DataConsumerOptions::new_direct(data_producer_id);
 
                     match transport.consume_data(options).await {
                         Ok(consumer) => {
                             let id = consumer.id();
-                            address.do_send(ServerMessage::Consumed { id, producer_id });
-                            address.do_send(InternalMessage::SaveConsumer(consumer));
-                            println!("consumer created: {}", id);
+                            let label = consumer.label().clone();
+                            let protocol = consumer.protocol().clone();
+                            match consumer.sctp_stream_parameters() {
+                                Some(sctp_stream_parameters) => {
+                                    address.do_send(ServerMessage::Consumed {
+                                        id,
+                                        data_producer_id,
+                                        sctp_stream_parameters,
+                                        label,
+                                        protocol,
+                                    });
+                                    address.do_send(InternalMessage::SaveConsumer(consumer));
+                                    println!("consumer created: {}", id);
+                                }
+                                None => {
+                                    eprintln!(
+                                        "sctp stream parameters does not exist in consumer: {}",
+                                        id
+                                    );
+                                }
+                            }
                         }
                         Err(error) => {
                             eprintln!("Failed to create consumer: {}", error);
@@ -320,6 +372,7 @@ impl Handler<InternalMessage> for DataConn {
     fn handle(&mut self, message: InternalMessage, ctx: &mut Self::Context) {
         match message {
             InternalMessage::Stop => {
+                println!("someone call stop message");
                 ctx.stop();
             }
             InternalMessage::SaveProducer(producer) => {
