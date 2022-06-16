@@ -1,0 +1,20 @@
+{
+  "name": "front",
+  "private": true,
+  "version": "0.1.0",
+  "main": "index.js",
+  "author": "h3poteto",
+  "scripts": {
+    "start": "webpack serve"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.3.0",
+    "typescript": "^4.6.4",
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.9.0"
+  },
+  "dependencies": {
+    "mediasoup-client": "^3.6.51"
+  }
+}
