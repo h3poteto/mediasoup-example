@@ -12,6 +12,7 @@ use mediasoup::prelude::{
     WebRtcTransportRemoteParameters, WorkerManager, WorkerSettings,
 };
 use mediasoup::sctp_parameters::SctpParameters;
+use mediasoup::transport::TransportGeneric;
 use mediasoup::worker::{WorkerLogLevel, WorkerLogTag};
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
@@ -332,6 +333,7 @@ impl Handler<ClientMessage> for UseConn {
                     {
                         Ok(producer) => {
                             let id = producer.id();
+
                             address.do_send(InternalMessage::SaveProducer(producer));
                             address.do_send(ServerMessage::SelfProduced { id });
                             // Need to broadcast for all users in the same route
