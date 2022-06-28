@@ -1,6 +1,6 @@
 import { Device } from "mediasoup-client";
 import { Producer } from "mediasoup-client/lib/Producer";
-import { ConsumerOptions } from "mediasoup-client/lib/Consumer";
+import { Consumer, ConsumerOptions } from "mediasoup-client/lib/Consumer";
 import {
   RtpCapabilities,
   RtpParameters,
@@ -93,6 +93,8 @@ type ClientMessage =
 const sendMessage = (ws: WebSocket, message: ClientMessage) => {
   ws.send(JSON.stringify(message));
 };
+
+let consumers: Array<Consumer> = [];
 
 const init = async () => {
   const receivePreview = document.querySelector("#receive") as HTMLAudioElement;
@@ -197,6 +199,8 @@ const init = async () => {
 
                   console.log(`${consumer.kind} consumer created: `, consumer);
 
+                  consumers.push(consumer);
+
                   sendMessage(ws, {
                     action: "ConsumerResume",
                     id: consumer.id as ConsumerId,
@@ -226,4 +230,14 @@ const init = async () => {
   ws.onerror = console.error;
 };
 
+const watchConsumers = () => {
+  setInterval(() => {
+    consumers.forEach((c) => {
+      const sources = c.rtpReceiver?.getContributingSources();
+      console.log("sources: ", sources);
+    });
+  }, 10000);
+};
+
+watchConsumers();
 init();
