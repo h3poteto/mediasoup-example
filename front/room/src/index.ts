@@ -8,6 +8,7 @@ import {
 } from "mediasoup-client/lib/Transport";
 import { DataConsumerOptions } from "mediasoup-client/lib/DataConsumer";
 import { SctpStreamParameters } from "mediasoup-client/lib/SctpParameters";
+import * as moment from "moment";
 
 type Brand<K, T> = K & { __brand: T };
 
@@ -93,6 +94,10 @@ type ClientMessage =
   | ClientConnectConsumerTransport
   | ClientConsume;
 
+type LatencyData = {
+  producerId: DataProducerId;
+  startTime: moment.Moment;
+};
 const sendMessage = (ws: WebSocket, message: ClientMessage) => {
   ws.send(JSON.stringify(message));
 };
@@ -105,6 +110,7 @@ const init = async () => {
   const device = new Device();
   let producerTransport: Transport | undefined;
   let consumerTransport: Transport | undefined;
+  let selfProducerId: DataProducerId | undefined;
 
   {
     const waitingForResponse: Map<ServerMessage["action"], Function> =
@@ -174,10 +180,15 @@ const init = async () => {
             });
 
           const dataProducer = await producerTransport.produceData();
+          selfProducerId = dataProducer.id as DataProducerId;
           sendButton.onclick = async () => {
             // Refs: https://mediasoup.org/documentation/v3/mediasoup/api/#dataProducer-send
-            console.log("sending message");
-            dataProducer.send("sample message");
+            console.debug("sending message");
+            const data: LatencyData = {
+              producerId: dataProducer.id as DataProducerId,
+              startTime: moment(),
+            };
+            dataProducer.send(JSON.stringify(data));
           };
 
           break;
@@ -221,7 +232,14 @@ const init = async () => {
             decodedMessage.id
           );
           dataConsumer.on("message", (message) => {
-            console.log("received message: ", message);
+            const now = moment();
+            const data = JSON.parse(message) as LatencyData;
+            console.debug("received message: ", message);
+            // Do not calculate self producer
+            if (data.producerId === selfProducerId) {
+              return;
+            }
+            console.log("latency: ", now.diff(data.startTime));
           });
           break;
         default:

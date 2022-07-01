@@ -15,6 +15,7 @@
     "webpack-dev-server": "^4.9.0"
   },
   "dependencies": {
-    "mediasoup-client": "^3.6.51"
+    "mediasoup-client": "^3.6.51",
+    "moment": "^2.29.3"
   }
 }
