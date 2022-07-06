@@ -12,7 +12,6 @@ use mediasoup::prelude::{
     WebRtcTransportRemoteParameters, WorkerManager, WorkerSettings,
 };
 use mediasoup::sctp_parameters::SctpParameters;
-use mediasoup::transport::TransportGeneric;
 use mediasoup::worker::{WorkerLogLevel, WorkerLogTag};
 use parking_lot::Mutex;
 use serde::{Deserialize, Serialize};
@@ -41,7 +40,7 @@ struct Room {
     router: Router,
     room_id: String,
     addresses: Mutex<Vec<Addr<UseConn>>>,
-    producers: Mutex<Vec<DataProducer>>,
+    producers: Mutex<HashMap<DataProducerId, DataProducer>>,
 }
 
 impl Room {
@@ -106,6 +105,7 @@ impl Room {
 struct UseConn {
     consumers: HashMap<DataConsumerId, DataConsumer>,
     transports: Transports,
+    producers: Vec<DataProducer>,
     room: Arc<Room>,
 }
 
@@ -136,6 +136,7 @@ impl UseConn {
                 producer: producer_transport,
                 consumer: consumer_transport,
             },
+            producers: vec![],
             room,
         })
     }
@@ -259,6 +260,10 @@ impl Actor for UseConn {
 
     fn stopped(&mut self, _ctx: &mut Self::Context) {
         println!("WebSocket connection closed");
+        for producer in self.producers.iter() {
+            self.room.producers.lock().remove(&producer.id());
+        }
+        // TODO: Remove address from room.addresses
     }
 }
 
@@ -296,7 +301,13 @@ impl Handler<ClientMessage> for UseConn {
             ClientMessage::Init {} => {
                 let address = ctx.address();
                 address.do_send(ServerMessage::AlreadyProduced {
-                    ids: self.room.producers.lock().iter().map(|p| p.id()).collect(),
+                    ids: self
+                        .room
+                        .producers
+                        .lock()
+                        .iter()
+                        .map(|p| p.1.id())
+                        .collect(),
                 })
             }
             ClientMessage::ConnectProducerTransport { dtls_parameters } => {
@@ -413,7 +424,6 @@ impl Handler<ClientMessage> for UseConn {
         }
     }
 }
-// TODO: Remove producer form room.producers when producer/consumer is closed
 
 impl Handler<ServerMessage> for UseConn {
     type Result = ();
@@ -432,7 +442,8 @@ impl Handler<InternalMessage> for UseConn {
                 ctx.stop();
             }
             InternalMessage::SaveProducer(producer) => {
-                self.room.producers.lock().push(producer);
+                self.producers.push(producer.clone());
+                self.room.producers.lock().insert(producer.id(), producer);
             }
             InternalMessage::SaveConsumer(consumer) => {
                 self.consumers.insert(consumer.id(), consumer);
