@@ -479,6 +479,7 @@ async fn main() -> std::io::Result<()> {
     match Room::new(&worker_manager).await {
         Ok(room) => {
             println!("room is creatd: {}", room.room_id);
+            println!("starting websocket server at: {}:{}", "127.0.0.1", "3000");
             let data = Data::new(room);
             HttpServer::new(move || {
                 App::new()
