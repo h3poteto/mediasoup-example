@@ -1,0 +1,21 @@
+{
+  "name": "room",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "main": "index.js",
+  "author": "h3poteto",
+  "scripts": {
+    "build": "tsc -p ./"
+  },
+  "dependencies": {
+    "mediasoup-client": "3.6.52",
+    "mediasoup-client-aiortc": "^3.6.3",
+    "moment": "^2.29.4",
+    "ws": "^8.8.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.3",
+    "typescript": "^4.7.4"
+  }
+}
