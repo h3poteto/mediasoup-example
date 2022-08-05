@@ -1,12 +1,11 @@
 // https://docs.websocketpp.org/md_tutorials_utility_client_utility_client.html
 // https://github.com/zaphoyd/websocketpp/blob/master/examples/echo_client/echo_client.cpp
-#include "websocketpp/close.hpp"
-#include "websocketpp/common/functional.hpp"
 #include <functional>
 #include <iostream>
 #include <string>
 #include <websocketpp/client.hpp>
 #include <websocketpp/config/asio_no_tls_client.hpp>
+#include <mediasoupclient/mediasoupclient.hpp>
 
 typedef websocketpp::client<websocketpp::config::asio_client> client;
 
