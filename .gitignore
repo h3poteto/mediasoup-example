@@ -1,2 +1,9 @@
 server/target
 node_modules
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+compile_commands.json
+client/c++/**/Makefile
+.cache
+client/c++/**/build
