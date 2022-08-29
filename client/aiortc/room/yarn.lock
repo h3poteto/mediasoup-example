@@ -53,12 +53,17 @@ event-target-shim@^5.0.1:
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
 
+event-target-shim@^6.0.2:
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-6.0.2.tgz#ea5348c3618ee8b62ff1d344f01908ee2b8a2b71"
+  integrity sha512-8q3LsZjRezbFZ2PN+uP+Q7pnHUMmAOziU2vA2OwoFaKIXxlxl38IylhSSgUorWu/rf4er67w0ikBqjBFk/pomA==
+
 events@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
-fake-mediastreamtrack@^1.1.3, fake-mediastreamtrack@^1.1.6:
+fake-mediastreamtrack@^1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/fake-mediastreamtrack/-/fake-mediastreamtrack-1.1.6.tgz#2cbdfae201b9771cb8a6b988120ce0edf25eb6ca"
   integrity sha512-lcoO5oPsW57istAsnjvQxNjBEahi18OdUhWfmEewwfPfzNZnji5OXuodQM+VnUPi/1HnQRJ6gBUjbt1TNXrkjQ==
@@ -73,21 +78,22 @@ h264-profile-level-id@^1.0.1:
   dependencies:
     debug "^4.1.1"
 
-mediasoup-client-aiortc@^3.6.3:
-  version "3.6.3"
-  resolved "https://registry.yarnpkg.com/mediasoup-client-aiortc/-/mediasoup-client-aiortc-3.6.3.tgz#1dc087cc99f9cf56db5b334317a4f8723839ae3b"
-  integrity sha512-oDV+tRCHnJJt6IwGYV0kjwZX6yivRZbmzaNJGtQAehx6sZz+za32QoY/jNDk/3wO/KKKgA8riD4bKvP6DDNo/w==
+mediasoup-client-aiortc@^3.7.1:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/mediasoup-client-aiortc/-/mediasoup-client-aiortc-3.7.1.tgz#e81088e3ad089c16277d514b4db7a7e0654728ce"
+  integrity sha512-M1dMQJT+iJvD9JRnYHkNeGZcQbLPBcrB5FIMzJWeE4hSlUMk007PpY3w6A0CoeADkrdkqm4FDhHGR8s7ULZxFw==
   dependencies:
-    event-target-shim "^5.0.1"
-    fake-mediastreamtrack "^1.1.3"
+    event-target-shim "^6.0.2"
+    fake-mediastreamtrack "^1.1.6"
+    mediasoup-client "^3.6.56"
     netstring "^0.3.0"
-    sdp-transform "^2.14.0"
-    uuid "^7.0.3"
+    sdp-transform "^2.14.1"
+    uuid "^8.3.2"
 
-mediasoup-client@3.6.52:
-  version "3.6.52"
-  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.52.tgz#8a3646e7d6e2eac4274462cfa4c87a40d8ac4d6d"
-  integrity sha512-7N8DB9zVzJ7Ac0L8RWQuq0ofHzz3FqYmWsWSTXi9R3DePM895q4A47bZkxFbSe8aCOGSGXsUWT+r7ALihYHn+A==
+mediasoup-client@^3.6.56, mediasoup-client@^3.6.57:
+  version "3.6.57"
+  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.57.tgz#c87dd3db39a7dd06f10c3862f0934d10d8704d91"
+  integrity sha512-/DHOpgyebCgNIFZ8ZmOZXMPXklyFxTPJa3IoVybG7cghMetMeqvGiOhzgR5i/uoMZ1CMGsOCBF9+604gyBzt4w==
   dependencies:
     "@types/debug" "^4.1.7"
     "@types/events" "^3.0.0"
@@ -115,7 +121,7 @@ netstring@^0.3.0:
   resolved "https://registry.yarnpkg.com/netstring/-/netstring-0.3.0.tgz#868dc5b20c58d3f7305531d49368eaaabd19b712"
   integrity sha512-zTXpGlbh5IDsH2+cf1esHnzZn6F3N55bmfdKq0kCGaIYb68RCIsD2MGk8L7yi0Nyh1Us/Mn22eHb5VKhAM6iQw==
 
-sdp-transform@^2.14.0, sdp-transform@^2.14.1:
+sdp-transform@^2.14.1:
   version "2.14.1"
   resolved "https://registry.yarnpkg.com/sdp-transform/-/sdp-transform-2.14.1.tgz#2bb443583d478dee217df4caa284c46b870d5827"
   integrity sha512-RjZyX3nVwJyCuTo5tGPx+PZWkDMCg7oOLpSlhjDdZfwUoNqG1mM8nyj31IGHyaPWXhjbP7cdK3qZ2bmkJ1GzRw==
@@ -130,12 +136,7 @@ typescript@^4.7.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.4.tgz#1a88596d1cf47d59507a1bcdfb5b9dfe4d488235"
   integrity sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==
 
-uuid@^7.0.3:
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-7.0.3.tgz#c5c9f2c8cf25dc0a372c4df1441c41f5bd0c680b"
-  integrity sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==
-
-uuid@^8.1.0:
+uuid@^8.1.0, uuid@^8.3.2:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
