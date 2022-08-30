@@ -1,22 +1,58 @@
-name: Rust
+name: Build
 
 on:
   push:
     branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  server:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      working-directory: ./server
+      run: |
+        cargo build --example data
+        cargo build --example echo
+        cargo build --example room
+
+
+  client:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Build
+      working-directory: ./client/aiortc/room
+      run: |
+        yarn install
+        yarn build
+
+  front:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Echo
+      working-directory: ./front/echo
+      run: |
+        yarn install
+        yarn build
+    - name: Data
+      working-directory: ./front/data
+      run: |
+        yarn install
+        yarn build
+    - name: Room
+      working-directory: ./front/room
+      run: |
+        yarn install
+        yarn build
