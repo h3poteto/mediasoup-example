@@ -6,10 +6,10 @@ use actix_web_actors::ws;
 use mediasoup::data_producer::{DataProducerId, DataProducerOptions};
 use mediasoup::prelude::{
     DataConsumer, DataConsumerId, DataConsumerOptions, DataProducer, DtlsParameters, IceCandidate,
-    IceParameters, MimeTypeAudio, Router, RouterOptions, RtcpFeedback, RtpCapabilitiesFinalized,
-    RtpCodecCapability, RtpCodecParametersParameters, SctpStreamParameters, Transport, TransportId,
-    TransportListenIp, TransportListenIps, WebRtcTransport, WebRtcTransportOptions,
-    WebRtcTransportRemoteParameters, WorkerManager, WorkerSettings,
+    IceParameters, ListenIp, MimeTypeAudio, Router, RouterOptions, RtcpFeedback,
+    RtpCapabilitiesFinalized, RtpCodecCapability, RtpCodecParametersParameters,
+    SctpStreamParameters, Transport, TransportId, TransportListenIps, WebRtcTransport,
+    WebRtcTransportOptions, WebRtcTransportRemoteParameters, WorkerManager, WorkerSettings,
 };
 use mediasoup::sctp_parameters::SctpParameters;
 use mediasoup::worker::{WorkerLogLevel, WorkerLogTag};
@@ -112,7 +112,7 @@ struct UseConn {
 impl UseConn {
     async fn new(room: Arc<Room>) -> Result<Self, String> {
         let mut transport_options =
-            WebRtcTransportOptions::new(TransportListenIps::new(TransportListenIp {
+            WebRtcTransportOptions::new(TransportListenIps::new(ListenIp {
                 // Your local IP address
                 ip: "192.168.10.12".parse().unwrap(),
                 announced_ip: None,
