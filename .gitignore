@@ -1,3 +1,6 @@
 server/target
 node_modules
 client/aiortc/room/dist
+front/echo/dist
+front/data/dist
+front/room/dist

@@ -6,10 +6,10 @@ use actix_web::web::Data;
 use actix_web::{get, web, App, Error, HttpRequest, HttpResponse, HttpServer, Responder};
 use actix_web_actors::ws;
 use mediasoup::prelude::{
-    Consumer, ConsumerId, ConsumerOptions, DtlsParameters, IceCandidate, IceParameters,
+    Consumer, ConsumerId, ConsumerOptions, DtlsParameters, IceCandidate, IceParameters, ListenIp,
     MimeTypeAudio, Producer, ProducerId, Router, RouterOptions, RtcpFeedback, RtpCapabilities,
     RtpCapabilitiesFinalized, RtpCodecCapability, RtpCodecParametersParameters, Transport,
-    TransportId, TransportListenIp, TransportListenIps, WebRtcTransport, WebRtcTransportOptions,
+    TransportId, TransportListenIps, WebRtcTransport, WebRtcTransportOptions,
     WebRtcTransportRemoteParameters, WorkerManager, WorkerSettings,
 };
 use mediasoup::producer::ProducerOptions;
@@ -75,12 +75,11 @@ impl ExampleConn {
             .map_err(|error| format!("Failed to create router: {}", error))?;
 
         // This example uses only 2 transports.
-        let transport_options =
-            WebRtcTransportOptions::new(TransportListenIps::new(TransportListenIp {
-                // Your local IP address
-                ip: "192.168.10.12".parse().unwrap(),
-                announced_ip: None,
-            }));
+        let transport_options = WebRtcTransportOptions::new(TransportListenIps::new(ListenIp {
+            // Your local IP address
+            ip: "192.168.10.12".parse().unwrap(),
+            announced_ip: None,
+        }));
         let producer_transport = router
             .create_webrtc_transport(transport_options.clone())
             .await
