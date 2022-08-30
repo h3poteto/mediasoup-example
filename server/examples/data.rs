@@ -5,8 +5,8 @@ use mediasoup::{
     data_producer::{DataProducer, DataProducerId, DataProducerOptions},
     prelude::{
         DataConsumer, DataConsumerId, DataConsumerOptions, DtlsParameters, IceCandidate,
-        IceParameters, SctpStreamParameters, TransportListenIp, TransportListenIps,
-        WebRtcTransport, WebRtcTransportOptions, WebRtcTransportRemoteParameters, WorkerSettings,
+        IceParameters, ListenIp, SctpStreamParameters, TransportListenIps, WebRtcTransport,
+        WebRtcTransportOptions, WebRtcTransportRemoteParameters, WorkerSettings,
     },
     router::{Router, RouterOptions},
     rtp_parameters::{
@@ -79,7 +79,7 @@ impl DataConn {
 
         // This example uses only 2 transports.
         let mut transport_options =
-            WebRtcTransportOptions::new(TransportListenIps::new(TransportListenIp {
+            WebRtcTransportOptions::new(TransportListenIps::new(ListenIp {
                 // Your local IP address
                 ip: "192.168.10.12".parse().unwrap(),
                 announced_ip: None,
