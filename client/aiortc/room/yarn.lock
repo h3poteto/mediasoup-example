@@ -78,10 +78,9 @@ h264-profile-level-id@^1.0.1:
   dependencies:
     debug "^4.1.1"
 
-mediasoup-client-aiortc@^3.7.1:
+"mediasoup-client-aiortc@git+https://github.com/versatica/mediasoup-client-aiortc.git":
   version "3.7.1"
-  resolved "https://registry.yarnpkg.com/mediasoup-client-aiortc/-/mediasoup-client-aiortc-3.7.1.tgz#e81088e3ad089c16277d514b4db7a7e0654728ce"
-  integrity sha512-M1dMQJT+iJvD9JRnYHkNeGZcQbLPBcrB5FIMzJWeE4hSlUMk007PpY3w6A0CoeADkrdkqm4FDhHGR8s7ULZxFw==
+  resolved "git+https://github.com/versatica/mediasoup-client-aiortc.git#35e961b391e9b1b4010720d3eacf7ad3486a1bee"
   dependencies:
     event-target-shim "^6.0.2"
     fake-mediastreamtrack "^1.1.6"

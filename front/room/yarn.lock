@@ -400,7 +400,7 @@ array-flatten@^2.1.2:
   resolved "https://registry.yarnpkg.com/array-flatten/-/array-flatten-2.1.2.tgz#24ef80a28c1a893617e2149b0c6d0d788293b099"
   integrity sha512-hNfzcOV8W4NdualtqBFPyVO+54DSJuZGY9qT4pRroB6S9e3iiido2ISIC5h9R2sPJ8H3FHCIiEnsv1lPXO3KtQ==
 
-awaitqueue@^2.3.3:
+awaitqueue@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/awaitqueue/-/awaitqueue-2.4.0.tgz#beb9a2b563b4817921f21c09cca2cdbb0d5989d4"
   integrity sha512-9nTnPxVuxiuKFTHslm9ltnekUECJidOQ5kE6JpZUH77KrKqStQuWUW7JPB2GJZ7rOwWLcbToHiIXle/nJe1VpQ==
@@ -644,7 +644,7 @@ debug@2.6.9:
   dependencies:
     ms "2.0.0"
 
-debug@^4.1.0, debug@^4.1.1, debug@^4.3.3:
+debug@^4.1.0, debug@^4.1.1, debug@^4.3.4:
   version "4.3.4"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.3.4.tgz#1319f6579357f2338d3337d2cdd4914bb5dcc865"
   integrity sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==
@@ -1252,21 +1252,21 @@ media-typer@0.3.0:
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=
 
-mediasoup-client@^3.6.51:
-  version "3.6.51"
-  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.51.tgz#4cfba301e607f543d4a150609e422c9dabb48346"
-  integrity sha512-pXyGrKrSvK0L0H3xr1QcYmflCh4r/FQK+d82WRWnc9nt5qZaoPpRQCQZThue8FCipBgLcolWhwF5CwXzDr1JiA==
+mediasoup-client@^3.6.57:
+  version "3.6.57"
+  resolved "https://registry.yarnpkg.com/mediasoup-client/-/mediasoup-client-3.6.57.tgz#c87dd3db39a7dd06f10c3862f0934d10d8704d91"
+  integrity sha512-/DHOpgyebCgNIFZ8ZmOZXMPXklyFxTPJa3IoVybG7cghMetMeqvGiOhzgR5i/uoMZ1CMGsOCBF9+604gyBzt4w==
   dependencies:
     "@types/debug" "^4.1.7"
     "@types/events" "^3.0.0"
-    awaitqueue "^2.3.3"
+    awaitqueue "^2.4.0"
     bowser "^2.11.0"
-    debug "^4.3.3"
+    debug "^4.3.4"
     events "^3.3.0"
     fake-mediastreamtrack "^1.1.6"
     h264-profile-level-id "^1.0.1"
     sdp-transform "^2.14.1"
-    supports-color "^9.2.1"
+    supports-color "^9.2.2"
 
 memfs@^3.4.1:
   version "3.4.1"
@@ -1882,7 +1882,7 @@ supports-color@^8.0.0:
   dependencies:
     has-flag "^4.0.0"
 
-supports-color@^9.2.1:
+supports-color@^9.2.2:
   version "9.2.2"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-9.2.2.tgz#502acaf82f2b7ee78eb7c83dcac0f89694e5a7bb"
   integrity sha512-XC6g/Kgux+rJXmwokjm9ECpD6k/smUoS5LKlUCcsYr4IY3rW0XyAympon2RmxGrlnZURMpg5T18gWDP9CsHXFA==
