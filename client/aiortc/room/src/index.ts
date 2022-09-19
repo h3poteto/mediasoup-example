@@ -222,14 +222,13 @@ const handleSocket = (client: WebSocket.WebSocket, device: Device) => {
           consumerOptions
         );
         console.log(`data consumer created for producer: `, decodedMessage.id);
+        dataConsumer.on("error", (err) => {
+          console.error(err);
+        });
         dataConsumer.on("message", (message) => {
           const now = moment();
           const data = JSON.parse(message) as LatencyData;
           console.debug("received message: ", message);
-          // Do not calculate self producer
-          if (data.producerId === selfProducer?.id) {
-            return;
-          }
           console.log("latency: ", now.diff(data.startTime));
         });
         break;

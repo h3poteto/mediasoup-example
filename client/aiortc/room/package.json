@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "mediasoup-client": "^3.6.57",
-    "mediasoup-client-aiortc": "^3.7.1",
+    "mediasoup-client-aiortc": "git+https://github.com/versatica/mediasoup-client-aiortc.git",
     "moment": "^2.29.4",
     "ws": "^8.8.0"
   },
